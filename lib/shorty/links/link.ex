@@ -11,10 +11,6 @@ defmodule Shorty.Links.Link do
     GenServer.start_link(Link, args, name: via_name(args.shortcode))
   end
 
-  def fetch(shortcode) do
-    GenServer.call(via_name(shortcode), :fetch)
-  end
-
   # Callbacks
 
   def init(args) do

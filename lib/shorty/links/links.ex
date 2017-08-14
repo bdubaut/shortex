@@ -2,12 +2,23 @@ defmodule Shorty.Links do
   @moduledoc """
   Links Module, internal API to interact with shortlinks
   """
-
-  require IEx
+  @links_registry :links_registry
   alias Shorty.Links.Link
+
+
+  def find_link(shortcode) do
+    case Registry.lookup(@links_registry, shortcode) do
+      [{_, _}] ->
+        shortcode
+        |> Link.via_name
+        |> GenServer.call(:fetch)
+      [] ->
+        {:error, :not_found}
+    end
+  end
 
   def create_link(args) do
     {:ok, _} = Link.start_link(args)
-    Link.fetch(args.shortcode)
+    find_link(args.shortcode)
   end
 end
