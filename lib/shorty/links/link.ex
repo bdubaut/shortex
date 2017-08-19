@@ -1,6 +1,9 @@
 defmodule Shorty.Links.Link do
+  @moduledoc """
+    Base Link GenServer
+  """
   use GenServer
-  alias Shorty.Links.Link
+  alias __MODULE__
 
   defstruct [url: nil, shortcode: nil]
   @registry :links_registry

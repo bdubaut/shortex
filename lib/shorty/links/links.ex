@@ -1,7 +1,12 @@
 defmodule Shorty.Links do
   @moduledoc """
-  Links Module, internal API to interact with shortlinks
+  Links Module, internal API to interact with shortlinks.
+
+  Implements:
+  - `find_link/1`
+  - `create_link/1`
   """
+
   @links_registry :links_registry
   alias Shorty.Links.Link
 
