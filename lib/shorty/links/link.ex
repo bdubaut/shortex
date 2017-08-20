@@ -5,7 +5,9 @@ defmodule Shorty.Links.Link do
   use GenServer
   alias __MODULE__
 
-  defstruct [url: nil, shortcode: nil]
+  require IEx
+
+  defstruct [url: nil, shortcode: nil, redirect_count: 0]
   @registry :links_registry
 
   def via_name(shortcode), do: {:via, Registry, {@registry, shortcode}}
@@ -23,5 +25,9 @@ defmodule Shorty.Links.Link do
 
   def handle_call(:fetch, _, state) do
     {:reply, state, state}
+  end
+
+  def handle_cast(:increment_redirect_count, state) do
+    {:noreply, %{state | redirect_count: state.redirect_count + 1}}
   end
 end

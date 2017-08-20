@@ -9,7 +9,7 @@ defmodule Shorty.Links do
 
   @links_registry :links_registry
   alias Shorty.Links.Link
-
+  require(IEx)
 
   def find_link(shortcode) do
     case Registry.lookup(@links_registry, shortcode) do
@@ -25,5 +25,11 @@ defmodule Shorty.Links do
   def create_link(args) do
     {:ok, _} = Link.start_link(args)
     find_link(args.shortcode)
+  end
+
+  def increment_redirect_count(shortcode) do
+    shortcode
+    |> Link.via_name
+    |> GenServer.cast(:increment_redirect_count)
   end
 end
