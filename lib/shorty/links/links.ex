@@ -1,35 +1,29 @@
 defmodule Shorty.Links do
   @moduledoc """
-  Links Module, internal API to interact with shortlinks.
-
-  Implements:
-  - `find_link/1`
-  - `create_link/1`
+    Links Module, internal API to interact with shortlinks.
+    It implements 3 main functions :
+    - create_link/1
+    - fetch_link/1
+    - stats returns/1
   """
 
   @links_registry :links_registry
   alias Shorty.Links.Link
   require(IEx)
 
-  def find_link(shortcode) do
-    case Registry.lookup(@links_registry, shortcode) do
-      [{_, _}] ->
-        shortcode
-        |> Link.via_name
-        |> GenServer.call(:fetch)
-      [] ->
-        {:error, :not_found}
-    end
-  end
+  @doc """
+    Creates a new link. Generates the shortcode if not present. Errors according to the spec.
+  """
+  def create_link(options \\ []), do: {:ok, true}
 
-  def create_link(args) do
-    {:ok, _} = Link.start_link(args)
-    find_link(args.shortcode)
-  end
+  @doc """
+    Fetches a link for redirection. increments the redirection count, and returns the link. Returns
+    an error according to the spec.
+  """
+  def fetch_link(shortcode), do: {:ok, true}
 
-  def increment_redirect_count(shortcode) do
-    shortcode
-    |> Link.via_name
-    |> GenServer.cast(:increment_redirect_count)
-  end
+  @doc """
+    Returns the link without changing it for stats purposes. Returns an error according to the spec.
+  """
+  def stats(shortcode), do: {:ok, true}
 end

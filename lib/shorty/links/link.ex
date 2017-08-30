@@ -7,7 +7,7 @@ defmodule Shorty.Links.Link do
 
   require IEx
 
-  defstruct [url: nil, shortcode: nil, redirect_count: 0]
+  defstruct [url: nil, shortcode: nil, redirect_count: 0, start_date: nil, last_seen_date: nil]
   @registry :links_registry
 
   def via_name(shortcode), do: {:via, Registry, {@registry, shortcode}}
