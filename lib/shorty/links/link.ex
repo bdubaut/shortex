@@ -19,7 +19,10 @@ defmodule Shorty.Links.Link do
 
   # Client
   def start_link(url, shortcode) do
-    GenServer.start_link(__MODULE__, %{url: url, shortcode: shortcode}, name: via_name(shortcode))
+    GenServer.start_link(
+      __MODULE__,
+      %{url: url, shortcode: shortcode},
+      name: via_name(shortcode))
   end
 
   # Server callbacks
@@ -27,8 +30,11 @@ defmodule Shorty.Links.Link do
     {:ok, struct(Link, link_args)}
   end
 
-  # Private
+  def handle_call(:lookup, _, state) do
+    {:reply, state, state}
+  end
 
+  # Private
 
   # # Callbacks
   #

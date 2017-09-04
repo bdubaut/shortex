@@ -39,7 +39,14 @@ defmodule Shorty.Links do
     Fetches a link for redirection. increments the redirection count, and returns the link. Returns
     an error according to the spec.
   """
-  def fetch_link(shortcode), do: {:ok, true}
+  def fetch_link(shortcode) do
+    case Registry.lookup(@registry, shortcode) do
+      [] ->
+        {:error, :not_found}
+      [{pid, _}] ->
+        {:ok, GenServer.call(pid, :lookup)}
+    end
+  end
 
   @doc """
     Returns the link without changing it for stats purposes. Returns an error according to the spec.

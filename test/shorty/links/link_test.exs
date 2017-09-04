@@ -15,4 +15,16 @@ defmodule Shorty.Links.LinkTest do
       assert link.redirect_count == 0
     end
   end
+
+  describe "call/2" do
+    setup context do
+      {:ok, pid} = Link.start_link("www.example.com", "qwerty")
+      [link: :sys.get_state(pid)]
+    end
+
+    # @tag :skip
+    test "call(_, :lookup) when the Link exists returns the current state of the Link", context do
+      assert GenServer.call(Link.via_name(context[:link].shortcode), :lookup) == context[:link]
+    end
+  end
 end

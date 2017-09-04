@@ -27,30 +27,27 @@ defmodule Shorty.LinksTest do
 
     test "fails if the provided shohrtcode does not match the regex" do
       code = ",.1&@()"
-      
+
       refute Regex.match?(~r/^[0-9a-zA-Z_]{4,}$/, code)
       assert {:error, :regex_not_matched} == Links.create_link("www.blah.com", code)
     end
   end
 
-  # describe "fetch_link/1" do
-  #   @tag :skip
-  #   test "returns the link" do
-  #     {:ok, link} = Links.fetch_link(expected_link.shortcode)
-  #     assert(expected_link == link)
-  #   end
-  #
-  #   @tag :skip
-  #   test "increments the redirect_count for the link" do
-  #     {:ok, link} = Links.fetch_link(expected_link.shortcode)
-  #     assert(link.redirect_count == expected_link.expected_count + 1)
-  #   end
-  #
-  #   @tag :skip
-  #   test "fails if the link is not found" do
-  #     assert({:error, "Link not found"} == Links.fetch_link(expected_link.shortcode))
-  #   end
-  # end
+  describe "fetch_link/1" do
+    setup context do
+      {:ok, pid} = Links.Link.start_link("www.example.com", "qwerty")
+      [link: :sys.get_state(pid), pid: pid]
+    end
+
+    test "returns the link", context do
+      {:ok, link} = Links.fetch_link(context[:link].shortcode)
+      assert(context[:link] == link)
+    end
+
+    test "fails if the link is not found" do
+      assert({:error, :not_found} == Links.fetch_link("bogus"))
+    end
+  end
   #
   # describe "stats/1" do
   #   @tag :skip
