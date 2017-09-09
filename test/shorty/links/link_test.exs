@@ -23,8 +23,24 @@ defmodule Shorty.Links.LinkTest do
     end
 
     # @tag :skip
-    test "call(_, :lookup) when the Link exists returns the current state of the Link", context do
+    test "call(server, :lookup) when the Link exists returns the current state of the Link", context do
       assert GenServer.call(Link.via_name(context[:link].shortcode), :lookup) == context[:link]
+    end
+  end
+
+  describe "cast/2" do
+    setup context do
+      {:ok, pid} = Link.start_link("www.example.com", "qwerty")
+      [pid: pid, link: GenServer.call(pid, :lookup)]
+    end
+
+    test "cast(server, :increment_redirect_count) and changes the redirection information", context do
+      assert(context[:link].redirect_count == 0)
+      assert(context[:link].last_seen_date == nil)
+      GenServer.cast(context[:pid], :increment_redirect_count)
+      link = GenServer.call(context[:pid], :lookup)
+      refute(link.last_seen_date == nil)
+      assert(link.redirect_count == 1)
     end
   end
 end

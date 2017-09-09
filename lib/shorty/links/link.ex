@@ -34,6 +34,11 @@ defmodule Shorty.Links.Link do
     {:reply, state, state}
   end
 
+  def handle_cast(:increment_redirect_count, state) do
+    {:noreply, %{state | redirect_count: state.redirect_count + 1,
+      last_seen_date: DateTime.utc_now |> DateTime.to_iso8601}}
+  end
+
   # Private
 
   # # Callbacks
@@ -42,7 +47,4 @@ defmodule Shorty.Links.Link do
   #   {:reply, state, state}
   # end
   #
-  # def handle_cast(:increment_redirect_count, state) do
-  #   {:noreply, %{state | redirect_count: state.redirect_count + 1}}
-  # end
 end
