@@ -49,7 +49,7 @@ defmodule Shorty.LinksTest do
       assert(link.redirect_count == 0)
 
       Links.fetch_link(context[:link].shortcode)
-      
+
       link = GenServer.call(context[:pid], :lookup)
       assert(link.redirect_count == 1)
     end
@@ -59,16 +59,19 @@ defmodule Shorty.LinksTest do
     end
   end
   #
-  # describe "stats/1" do
-  #   @tag :skip
-  #   test "returns the link" do
-  #     {:ok, link} = Links.stats(expected_link.shortcode)
-  #     assert(expected_link == link)
-  #   end
-  #
-  #   @tag :skip
-  #   test "fails if the link is not found" do
-  #     assert({:error, "Link not found"} == Links.stats(expected_link.shortcode))
-  #   end
-  # end
+  describe "stats/1" do
+    setup context do
+      {:ok, pid} = Links.Link.start_link("www.example.com", "qwerty")
+      [link: :sys.get_state(pid), pid: pid]
+    end
+
+    test "returns the link", context do
+      {:ok, link} = Links.stats(context[:link].shortcode)
+      assert(context[:link] == link)
+    end
+
+    test "fails if the link is not found" do
+      assert({:error, :not_found} == Links.stats("bogus"))
+    end
+  end
 end

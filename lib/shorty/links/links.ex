@@ -18,14 +18,15 @@ defmodule Shorty.Links do
     case shortcode do
       nil ->
         code = generate_shortcode()
-        Link.start_link(url, code)
+        {:ok, pid} = Link.start_link(url, code)
 
-        {:ok, %{url: url, shortcode: code}}
+        {:ok, GenServer.call(pid, :lookup)}
       _ ->
         if validate_shortcode(shortcode) do
           if Registry.lookup(@registry, shortcode) == [] do
             {:ok, pid} = Link.start_link(url, shortcode)
-            {:ok, %{url: url, shortcode: shortcode}}
+
+            {:ok, GenServer.call(pid, :lookup)}
           else
             {:error, :shortcode_already_in_use}
           end
@@ -54,7 +55,14 @@ defmodule Shorty.Links do
   @doc """
     Returns the link without changing it for stats purposes. Returns an error according to the spec.
   """
-  def stats(shortcode), do: {:ok, true}
+  def stats(shortcode) do
+    case Registry.lookup(@registry, shortcode) do
+      [] ->
+        {:error, :not_found}
+      [{_, _}] ->
+        {:ok, GenServer.call(Link.via_name(shortcode), :lookup)}
+    end
+  end
 
   # Private functions
 
