@@ -44,6 +44,16 @@ defmodule Shorty.LinksTest do
       assert(context[:link] == link)
     end
 
+    test "increments the redirect count", context do
+      link = GenServer.call(context[:pid], :lookup)
+      assert(link.redirect_count == 0)
+
+      Links.fetch_link(context[:link].shortcode)
+      
+      link = GenServer.call(context[:pid], :lookup)
+      assert(link.redirect_count == 1)
+    end
+
     test "fails if the link is not found" do
       assert({:error, :not_found} == Links.fetch_link("bogus"))
     end

@@ -18,7 +18,7 @@ defmodule Shorty.Links.LinkTest do
 
   describe "call/2" do
     setup context do
-      {:ok, pid} = Link.start_link("www.example.com", "qwerty")
+      {:ok, pid} = Link.start_link("www.example.com", "bogus2")
       [link: :sys.get_state(pid)]
     end
 
@@ -30,7 +30,7 @@ defmodule Shorty.Links.LinkTest do
 
   describe "cast/2" do
     setup context do
-      {:ok, pid} = Link.start_link("www.example.com", "qwerty")
+      {:ok, pid} = Link.start_link("www.example.com", "blah")
       [pid: pid, link: GenServer.call(pid, :lookup)]
     end
 

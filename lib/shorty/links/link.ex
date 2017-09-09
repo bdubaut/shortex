@@ -15,6 +15,7 @@ defmodule Shorty.Links.Link do
 
   @registry :links_registry
 
+  @doc false
   def via_name(shortcode), do: {:via, Registry, {@registry, shortcode}}
 
   # Client
@@ -26,6 +27,7 @@ defmodule Shorty.Links.Link do
   end
 
   # Server callbacks
+
   def init(link_args) do
     {:ok, struct(Link, link_args)}
   end
@@ -38,13 +40,4 @@ defmodule Shorty.Links.Link do
     {:noreply, %{state | redirect_count: state.redirect_count + 1,
       last_seen_date: DateTime.utc_now |> DateTime.to_iso8601}}
   end
-
-  # Private
-
-  # # Callbacks
-  #
-  # def handle_call(:fetch, _, state) do
-  #   {:reply, state, state}
-  # end
-  #
 end

@@ -43,8 +43,11 @@ defmodule Shorty.Links do
     case Registry.lookup(@registry, shortcode) do
       [] ->
         {:error, :not_found}
-      [{pid, _}] ->
-        {:ok, GenServer.call(pid, :lookup)}
+      [{_, _}] ->
+        link = GenServer.call(Link.via_name(shortcode), :lookup)
+        GenServer.cast(Link.via_name(shortcode), :increment_redirect_count)
+
+        {:ok, link}
     end
   end
 
@@ -71,6 +74,6 @@ defmodule Shorty.Links do
   end
 
   defp validate_shortcode(shortcode) do
-      Regex.match?(~r/^[0-9a-zA-Z_]{4,}$/, shortcode)
+    Regex.match?(~r/^[0-9a-zA-Z_]{4,}$/, shortcode)
   end
 end
