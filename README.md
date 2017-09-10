@@ -1,4 +1,5 @@
 # Shorty
+[![Build Status](https://travis-ci.org/bdubaut/shortex.svg?branch=travis-ci)](https://travis-ci.org/bdubaut/shortex)
 
 To start the app:
 
