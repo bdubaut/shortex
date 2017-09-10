@@ -12,10 +12,10 @@ defmodule Shorty.LinksTest do
     end
 
     test "creates a new link when a shortcode is provided" do
-      {:ok, link} = Links.create_link("http://www.example.com", "qwerty")
+      {:ok, link} = Links.create_link("http://www.example.com", "my_link")
 
       assert link.url == "http://www.example.com"
-      assert link.shortcode == "qwerty"
+      assert link.shortcode == "my_link"
     end
 
     test "fails if the provided shortcode is already in use" do

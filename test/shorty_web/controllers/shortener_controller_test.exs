@@ -14,6 +14,7 @@ defmodule ShortyWeb.ShortenerControllerTest do
   end
 
   describe ".create/2" do
+    @tag :skip
     test "renders shortcode data when the data is valid" do
       response = build_conn
       |> post(shortener_path(build_conn, :create), url: @valid_attrs.url)
@@ -22,6 +23,7 @@ defmodule ShortyWeb.ShortenerControllerTest do
       assert {:ok, link} = link = GenServer.call(Link.via_name(@valid_attrs.shortcode), :lookup)
       assert response["shortcode"] == link.shortcode
     end
+    @tag :skip
     test "returns a 400 when the url is missing" do
       response = build_conn
       |> post(shortener_path(build_conn, :create), url: @invalid_attrs.url)
@@ -29,6 +31,7 @@ defmodule ShortyWeb.ShortenerControllerTest do
 
       assert response["errors"] == "the url is missing."
     end
+    @tag :skip
     test "returns a 409 if the shortcode is already in use" do
       response = build_conn
       |> post(shortener_path(build_conn, :create), url: @invalid_attrs.url)
@@ -36,6 +39,7 @@ defmodule ShortyWeb.ShortenerControllerTest do
 
       assert response["errors"] == "this shortcode is already in use."
     end
+    @tag :skip
     test "returns a 422 if the shortcode does not match `^[0-9a-zA-Z_]{4,}$`" do
       conn = post conn, shortener_path(conn, :create), user: @bad_regex_attrs
       response = build_conn
