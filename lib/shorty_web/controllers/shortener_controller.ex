@@ -1,5 +1,9 @@
 defmodule ShortyWeb.ShortenerController do
   use ShortyWeb, :controller
 
-  def create(conn, params), do: {:ok, conn}
+  action_fallback FallbackController
+
+  def create(conn, params) do
+    {:ok, conn}
+  end
 end
