@@ -18,6 +18,12 @@ defmodule Shorty.LinksTest do
       assert link.shortcode == "my_link"
     end
 
+    test "fails if the url is not present" do
+      code = "qwerty"
+
+      assert {:error, :url_not_present} == Links.create_link(nil, code)
+    end
+
     test "fails if the provided shortcode is already in use" do
       code = "qwerty"
       Links.create_link("www.blah.com", code)
