@@ -56,4 +56,34 @@ defmodule ShortyWeb.ShortenerControllerTest do
         " `^[0-9a-zA-Z_]{4,}$`."
     end
   end
+
+  describe ".show/2" do
+    setup context do
+      {:ok, link} = Links.create_link("http://google.com", "qWeRtY")
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :show, link.shortcode))
+
+      [link: link, response: response]
+    end
+    test "redirects to the link's url", context do
+      assert redirected_to(context[:response]) =~ context[:link].url
+    end
+    test "increments the redirect_count", context do
+      created_link = GenServer.call(Links.Link.via_name(context[:link].shortcode), :lookup)
+
+      assert created_link.redirect_count == 1
+    end
+    test "returns a 404 if the link is not found" do
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :show, "code_not_found"))
+      |> json_response(404)
+
+      assert response["errors"] == "The shortcode cannot be found in the system"
+    end
+  end
+
+  describe ".stats/2" do
+    test "returns the detailed information of the link"
+    test "returns a 404 if the link is not found"
+  end
 end

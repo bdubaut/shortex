@@ -12,4 +12,12 @@ defmodule ShortyWeb.ShortenerController do
       |> render("create.json", link: link)
     end
   end
+
+  def show(conn, %{"shortcode" => shortcode}) do
+    with {:ok, link} <- Links.fetch_link(shortcode) do
+      conn
+      |> put_status(302)
+      |> redirect(external: link.url)
+    end
+  end
 end
