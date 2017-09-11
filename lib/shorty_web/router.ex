@@ -7,8 +7,8 @@ defmodule ShortyWeb.Router do
 
   scope "/", ShortyWeb do
     pipe_through :api
-    post "/shorten", ShortyWeb.ShortenerController, :create
-    get "/:shortcode", ShortyWeb.ShortenerController, :show
-    get "/:shortcode/stats", ShortyWeb.ShortenerController, :stats
+    post "/shorten", ShortenerController, :create
+    get "/:shortcode", ShortenerController, :show
+    get "/:shortcode/stats", ShortenerController, :stats
   end
 end

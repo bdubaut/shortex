@@ -1,52 +1,59 @@
 defmodule ShortyWeb.ShortenerControllerTest do
-  use ShortyWeb.ConnCase
+  use ShortyWeb.ConnCase, async: true
 
   alias Shorty.Links
-  alias Shorty.Links.Link
 
-  @valid_attrs %{}
-  @invalid_attrs %{}
-  @conflict_attrs %{}
-  @bad_regex_attrs %{}
+  @full_attrs %{"url" => "example.com", "shortcode" => "my_code1"}
+  @bad_rexgex_arg %{"url" => "example.com", "shortcode" => "()!-?)"}
+
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe ".create/2" do
-    @tag :skip
-    test "renders shortcode data when the data is valid" do
-      response = build_conn
-      |> post(shortener_path(build_conn, :create), url: @valid_attrs.url)
-      |> json_response(201)
+    test "renders the shortcode data when the data is valid and shortcode here" do
+      response = build_conn()
+        |> post(shortener_path(build_conn(), :create), @full_attrs)
+        |> json_response(201)
 
-      assert {:ok, link} = link = GenServer.call(Link.via_name(@valid_attrs.shortcode), :lookup)
-      assert response["shortcode"] == link.shortcode
+      assert response["shortcode"] == @full_attrs["shortcode"]
     end
-    @tag :skip
+
+    test "renders the shortcode data when there is only a url" do
+      response = build_conn()
+        |> post(shortener_path(build_conn(), :create), %{"url" => "example.com"})
+        |> json_response(201)
+
+      refute response["shortcode"] == nil
+      assert response["errors"] == nil
+    end
+
     test "returns a 400 when the url is missing" do
-      response = build_conn
-      |> post(shortener_path(build_conn, :create), url: @invalid_attrs.url)
+      response = build_conn()
+      |> post(shortener_path(build_conn(), :create),  %{"shortcode" => "bad_one"})
       |> json_response(400)
 
-      assert response["errors"] == "the url is missing."
+      assert response["errors"] == "url is not present."
     end
-    @tag :skip
+
     test "returns a 409 if the shortcode is already in use" do
-      response = build_conn
-      |> post(shortener_path(build_conn, :create), url: @invalid_attrs.url)
+      Links.create_link(@full_attrs["url"], @full_attrs["shortcode"])
+      response = build_conn()
+      |> post(shortener_path(build_conn(), :create), @full_attrs)
       |> json_response(409)
 
-      assert response["errors"] == "this shortcode is already in use."
+      assert response["errors"] == "The the desired shortcode is already in use." <>
+        " Shortcodes are case-sensitive."
     end
-    @tag :skip
+
     test "returns a 422 if the shortcode does not match `^[0-9a-zA-Z_]{4,}$`" do
-      conn = post conn, shortener_path(conn, :create), user: @bad_regex_attrs
-      response = build_conn
-      |> post(shortener_path(build_conn, :create), url: @invalid_attrs.url)
+      response = build_conn()
+      |> post(shortener_path(build_conn(), :create), @bad_rexgex_arg)
       |> json_response(422)
 
-      assert response["errors"] == "the shortcode does not match the regex."
+      assert response["errors"] == "The shortcode fails to meet the following regexp:" <>
+        " `^[0-9a-zA-Z_]{4,}$`."
     end
   end
 end
