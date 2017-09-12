@@ -83,7 +83,26 @@ defmodule ShortyWeb.ShortenerControllerTest do
   end
 
   describe ".stats/2" do
-    test "returns the detailed information of the link"
-    test "returns a 404 if the link is not found"
+    setup context do
+      Links.create_link("http://google.com", "qWeRtY")
+      {:ok, link} = Links.fetch_link("qWeRtY")
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :stats, link.shortcode))
+      |> json_response(200)
+
+      [link: link, response: response]
+    end
+    test "returns the detailed information of the link", context do
+      assert context[:response]["startDate"] == context[:link].start_date
+      assert context[:response]["lastSeenDate"] == context[:link].last_seen_date
+      assert context[:response]["redirectCount"] == context[:link].redirect_count
+    end
+    test "returns a 404 if the link is not found" do
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :stats, "something"))
+      |> json_response(404)
+
+      assert response["errors"] == "The shortcode cannot be found in the system"
+    end
   end
 end
