@@ -84,18 +84,29 @@ defmodule ShortyWeb.ShortenerControllerTest do
 
   describe ".stats/2" do
     setup context do
-      Links.create_link("http://google.com", "qWeRtY")
-      {:ok, link} = Links.fetch_link("qWeRtY")
-      response = build_conn()
-      |> get(shortener_path(build_conn(), :stats, link.shortcode))
-      |> json_response(200)
+      {:ok, link} = Links.create_link("example.com", "qWeRtY")
 
-      [link: link, response: response]
+      [link: link]
     end
     test "returns the detailed information of the link", context do
-      assert context[:response]["startDate"] == context[:link].start_date
-      assert context[:response]["lastSeenDate"] == context[:link].last_seen_date
-      assert context[:response]["redirectCount"] == context[:link].redirect_count
+      GenServer.cast(Links.Link.via_name(context[:link].shortcode), :increment_redirect_count)
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :stats, context[:link].shortcode))
+      |> json_response(200)
+
+
+      assert response["startDate"] == context[:link].start_date
+      assert response["redirectCount"] == 1
+      refute response["lastSeenDate"] == nil
+    end
+    test "does not return `lastSeenDate` if redirectCount == 0", context do
+      response = build_conn()
+      |> get(shortener_path(build_conn(), :stats, context[:link].shortcode))
+      |> json_response(200)
+
+      assert response["startDate"] == context[:link].start_date
+      assert response["redirectCount"] == 0
+      refute Map.has_key?(response, "lastSeenDate")
     end
     test "returns a 404 if the link is not found" do
       response = build_conn()

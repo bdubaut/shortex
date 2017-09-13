@@ -6,10 +6,17 @@ defmodule ShortyWeb.ShortenerView do
   end
 
   def render("stats.json", %{link: link}) do
-    %{
-      startDate:      link.start_date,
-      lastSeenDate:   link.last_seen_date,
-      redirectCount:  link.redirect_count
-    }
+    if link.redirect_count > 0 do
+      %{
+        startDate:      link.start_date,
+        lastSeenDate:   link.last_seen_date,
+        redirectCount:  link.redirect_count
+      }
+    else
+      %{
+        startDate:      link.start_date,
+        redirectCount:  link.redirect_count
+      }
+    end
   end
 end

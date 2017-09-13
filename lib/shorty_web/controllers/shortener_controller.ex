@@ -34,7 +34,7 @@ defmodule ShortyWeb.ShortenerController do
     if Regex.match?(~r/https{0,}:\/\//, url) do
       url
     else
-      "https://#{url}"
+      "http://#{url}"
     end
   end
 end
