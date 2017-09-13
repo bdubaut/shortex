@@ -1,4 +1,5 @@
 # Shorty
+[![Build Status](https://travis-ci.org/bdubaut/shortex.svg?branch=travis-ci)](https://travis-ci.org/bdubaut/shortex)
 
 To start the app:
 
@@ -8,6 +9,9 @@ To start the app:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## API Documentation
+
+Using only GenServers for the links is probably not the most scalable or reliable solution for this
+project, but it was fun to learn about this OTP behhaviour this way. 
 
 **All responses are encoded in JSON and have the appropriate Content-Type header**
 

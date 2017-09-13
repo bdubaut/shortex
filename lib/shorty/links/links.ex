@@ -9,11 +9,11 @@ defmodule Shorty.Links do
 
   @registry :links_registry
   alias Shorty.Links.Link
-  require(IEx)
 
   @doc """
     Creates a new link. Generates the shortcode if not present. Errors according to the spec.
   """
+  def create_link(nil, _), do: {:error, :url_not_present}
   def create_link(url, shortcode \\ nil) do
     case shortcode do
       nil ->
