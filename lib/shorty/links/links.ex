@@ -11,7 +11,8 @@ defmodule Shorty.Links do
   alias Shorty.Links.Link
 
   @doc """
-    Creates a new link. Generates the shortcode if not present. Errors according to the spec.
+  Creates a new link. Generates the shortcode if not present. Errors according
+  to the spec.
   """
   def create_link(nil, _), do: {:error, :url_not_present}
   def create_link(url, shortcode \\ nil) do
